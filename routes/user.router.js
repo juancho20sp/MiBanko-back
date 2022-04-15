@@ -5,28 +5,22 @@ const UserService = require('../services/user.services');
 const AccountsService = require('../services/accounts.services');
 
 // Middlewares
-const authHandler = require('../middlewares/auth.handler');
+const {
+  verifyToken,
+  verifyAdminToken
+} = require('../middlewares/auth.handler');
 
 const router = express.Router();
 const userService = new UserService();
 const accountsService = new AccountsService();
 
 
-
 router.get('/getAllUsers',
-  authHandler,
+  verifyAdminToken,
   async(req, res) => {
   try {
-    const {
-      usr_role,
-    } = req.decodedUser;
-
-    if (usr_role === 'ADMIN'){
       const users = await userService.getAllUsers();
       return res.status(200).json(users);
-    }
-
-    return res.status(403).send('A token is required for authentication');
 
   } catch(err) {
     res.status(500).json({
@@ -36,7 +30,7 @@ router.get('/getAllUsers',
 })
 
 router.post('/getUserBalance',
-  authHandler,
+  verifyToken,
   async(req, res) => {
     try {
       const {
