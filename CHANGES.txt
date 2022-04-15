@@ -1,0 +1,6 @@
+USER ROUTER:
+  - /getAllUsers -> Admin token.
+  - /getUserBalance -> Token -> Document type and number must match with the balance to consult.
+
+ACCOUNTS ROUTER
+  - /getAccount -> Token -> Document type and number must match with the account to consult.
