@@ -43,7 +43,7 @@ class AccountsService{
                 message: 'Something went wrong creating the account'
             }
 
-            throw new Error(err);
+            throw new Error(err)
 
         } finally {
             await db.end();

@@ -13,11 +13,21 @@ const accountsService = new AccountsService();
 
 
 
-router.get('/getAllUsers', async(req, res) => {
+router.get('/getAllUsers',
+  authHandler,
+  async(req, res) => {
   try {
-    const users = await userService.getAllUsers();
+    const {
+      usr_role,
+    } = req.decodedUser;
 
-    res.status(200).json(users);
+    if (usr_role === 'ADMIN'){
+      const users = await userService.getAllUsers();
+      return res.status(200).json(users);
+    }
+
+    return res.status(403).send('A token is required for authentication');
+
   } catch(err) {
     res.status(500).json({
       message: 'Something went wrong on the server'
@@ -110,8 +120,6 @@ router.post('/createUser', async (req, res) => {
  router.post('/createLogin', async (req, res) => {
   try {
     const data = req.body.user;
-
-
     const userLogin = await userService.createLogin(data);
 
     res.status(200).json(userLogin);
