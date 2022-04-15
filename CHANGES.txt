@@ -15,7 +15,12 @@ BANKS ROUTER
 
 TRANSACTIONS ROUTER
   - /getTransactionsInfo -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - /createTransactionIntra -> Token.
+  - /createTransactionInter -> Token.
+  - /getTransactionsDetail -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
 
 
-// RECOMMENDATIONS
+
+RECOMMENDATIONS
   - /updateAccount -> what if the user has two or more accounts?
+  - /createTransactionIntra -> it seems that the endpoint is not working

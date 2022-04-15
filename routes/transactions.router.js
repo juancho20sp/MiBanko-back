@@ -2,6 +2,13 @@ const express = require('express');
 
 const TransctionsService = require('../services/transactions.services');
 
+// Middlewares
+const {
+  verifyToken,
+  verifyAdminToken
+} = require('../middlewares/auth.handler');
+
+
 const router = express.Router();
 const service = new TransctionsService();
 
@@ -14,10 +21,11 @@ const service = new TransctionsService();
  *  numDoc: Integer
  *  overdraw: Bool
  *  amount_overdraw: Integer
- * }
+ * },
+ * token: Token
  */
 
-router.post('/createTransactionIntra', async (req, res) => {
+router.post('/createTransactionIntra', verifyToken, async (req, res) => {
   try {
     const data = req.body.transactionIntra;
 
@@ -45,9 +53,10 @@ router.post('/createTransactionIntra', async (req, res) => {
  *  amount: Integer
  *  overdraw: Bool
  *  amount_overdraw: Integer
- * }
+ * },
+ * token: Token
  */
- router.post('/createTransactionInter', async (req, res) => {
+ router.post('/createTransactionInter', verifyToken, async (req, res) => {
   try {
     const data = req.body.transactionInter;
 
@@ -66,7 +75,7 @@ router.post('/createTransactionIntra', async (req, res) => {
  *  token: Admin token
  * }
  */
-router.post('/getTransactionsInfo', async(req, res) => {
+router.post('/getTransactionsInfo', verifyAdminToken, async(req, res) => {
   try {
     const result = await service.getTransactionsInfo();
     res.status(200).json(result);
@@ -77,7 +86,12 @@ router.post('/getTransactionsInfo', async(req, res) => {
   }
 })
 
-router.get('/getTransactionsDetail', async(req, res) => {
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
+router.post('/getTransactionsDetail', verifyAdminToken, async(req, res) => {
   try {
     const result = await service.getTransactionsDetail();
     res.status(200).json(result);
