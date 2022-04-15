@@ -51,16 +51,18 @@ router.post('/getAccount',
     }
   });
 
-router.get('/getAllAccounts', async (req, res) => {
-  try {
-    const data = await service.getAllAccounts();
+router.post('/getAllAccounts',
+  verifyAdminToken,
+  async (req, res) => {
+    try {
+      const data = await service.getAllAccounts();
 
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server',
-    });
-  }
+      res.status(200).json(data);
+    } catch (err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server',
+      });
+    }
 });
 
 router.get('/getBalanceBank', async (req, res) => {
