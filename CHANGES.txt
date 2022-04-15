@@ -18,9 +18,12 @@ TRANSACTIONS ROUTER
   - /createTransactionIntra -> Token.
   - /createTransactionInter -> Token.
   - /getTransactionsDetail -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - /getTransactionsUsuario -> Token -> SWITCHED FROM GET TO POST (Need a token as body).
+  - /getOverdraws -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
 
 
 
 RECOMMENDATIONS
   - /updateAccount -> what if the user has two or more accounts?
   - /createTransactionIntra -> it seems that the endpoint is not working
+  - /getTransactionsUsuario -> it seems that the endpoint is not working

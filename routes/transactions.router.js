@@ -102,7 +102,12 @@ router.post('/getTransactionsDetail', verifyAdminToken, async(req, res) => {
   }
 })
 
-router.get('/getTransactionsUsuario', async(req, res) => {
+/**
+ * {
+ *  token: Token
+ * }
+ */
+router.post('/getTransactionsUsuario', verifyToken, async(req, res) => {
   try {
     const data = req.body.getData;
     const result = await service.getTransactionsUsuario(data);
@@ -114,7 +119,12 @@ router.get('/getTransactionsUsuario', async(req, res) => {
   }
 })
 
-router.get('/getOverdraws', async(req, res) => {
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
+router.post('/getOverdraws', verifyAdminToken, async(req, res) => {
   try {
     const result = await service.getOverdraws();
     res.status(200).json(result);
