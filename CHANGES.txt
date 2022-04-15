@@ -5,3 +5,4 @@ USER ROUTER:
 ACCOUNTS ROUTER
   - /getAccount -> Token -> Document type and number must match with the account to consult.
   - /getAllAccounts -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - /getBalanceBank -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
