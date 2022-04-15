@@ -88,18 +88,20 @@ router.post('/getBalanceBank',
  *    document_type: String
  * }
  */
-router.post('/createAccount', async (req, res) => {
-  try {
-    const data = req.body.account;
+router.post('/createAccount',
+verifyAdminToken,
+  async (req, res) => {
+    try {
+      const data = req.body.account;
 
-    const accountData = await service.createAccount(data);
+      const accountData = await service.createAccount(data);
 
-    res.status(200).json(accountData);
-  } catch (err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server',
-    });
-  }
+      res.status(200).json(accountData);
+    } catch (err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server',
+      });
+    }
 });
 
 /**
