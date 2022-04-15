@@ -7,3 +7,10 @@ ACCOUNTS ROUTER
   - /getAllAccounts -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
   - /getBalanceBank -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
   - /createAccount -> Admin token.
+  - /updateAccount -> Admin token.
+
+BANKS ROUTER
+  - / -> Token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+
+// RECOMMENDATIONS
+  - /updateAccount -> what if the user has two or more accounts?

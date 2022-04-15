@@ -108,21 +108,25 @@ verifyAdminToken,
  * account: {
  *    document_number: Integer
  *    document_type: String
+ *    acc_type: String
  *    newAcc_balance: Integer
  * }
  */
-router.post('/updateAccount', async (req, res) => {
-  try {
-    const data = req.body.account;
+// TODO -> An user could have two or more accounts
+router.post('/updateAccount',
+  verifyAdminToken,
+  async (req, res) => {
+    try {
+      const data = req.body.account;
 
-    const accountData = await service.updateAccount(data);
+      const accountData = await service.updateAccount(data);
 
-    res.status(200).json(accountData);
-  } catch (err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server',
-    });
-  }
+      res.status(200).json(accountData);
+    } catch (err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server',
+      });
+    }
 });
 
 module.exports = router;
