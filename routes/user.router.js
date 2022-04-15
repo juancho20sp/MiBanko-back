@@ -111,18 +111,19 @@ router.post('/createUser', async (req, res) => {
  *    password: String
  * }
  */
- router.post('/createLogin', async (req, res) => {
-  try {
-    const data = req.body.user;
-    const userLogin = await userService.createLogin(data);
+ // TODO: Verify it this is needed
+//  router.post('/createLogin', async (req, res) => {
+//   try {
+//     const data = req.body.user;
+//     const userLogin = await userService.createLogin(data);
 
-    res.status(200).json(userLogin);
-  } catch(err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server'
-    })
-  }
-})
+//     res.status(200).json(userLogin);
+//   } catch(err) {
+//     res.status(500).json({
+//       message: 'Something went wrong on the server'
+//     })
+//   }
+// })
 
 
 
