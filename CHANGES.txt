@@ -10,7 +10,12 @@ ACCOUNTS ROUTER
   - /updateAccount -> Admin token.
 
 BANKS ROUTER
-  - / -> Token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - / (Get all banks) -> Token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - / (Post -> create bank) -> ADmin token -> SWITCHED ENDPOINT FROM POST(/) TO POST(/createBank)
+
+TRANSACTIONS ROUTER
+  - /getTransactionsInfo -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+
 
 // RECOMMENDATIONS
   - /updateAccount -> what if the user has two or more accounts?

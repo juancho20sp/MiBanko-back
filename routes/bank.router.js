@@ -25,7 +25,13 @@ router.post('/', verifyToken, async(req, res) => {
   }
 })
 
-router.post('/', async (req, res) => {
+/**
+ * {
+ *  bnk_name: String,
+ *  token: Admin token
+ * }
+ */
+router.post('/createBank', verifyAdminToken, async (req, res) => {
   const bankData = req.body;
 
   try {

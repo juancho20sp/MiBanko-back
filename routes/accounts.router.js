@@ -17,7 +17,8 @@ const service = new AccountsService();
  *    document_number: Integer
  *    document_type: String
  *    acc_type: String
- * }
+ * },
+ * token: Token
  */
 router.post('/getAccount',
   verifyToken,
@@ -51,6 +52,11 @@ router.post('/getAccount',
     }
   });
 
+  /**
+   * {
+   *  token: Admin token
+   * }
+   */
 router.post('/getAllAccounts',
   verifyAdminToken,
   async (req, res) => {
@@ -65,6 +71,11 @@ router.post('/getAllAccounts',
     }
 });
 
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
 router.post('/getBalanceBank',
   verifyAdminToken,
   async (req, res) => {
@@ -86,7 +97,8 @@ router.post('/getBalanceBank',
  *    acc_type: String
  *    document_number: Integer
  *    document_type: String
- * }
+ * },
+ * token: Admin token
  */
 router.post('/createAccount',
 verifyAdminToken,
@@ -110,7 +122,8 @@ verifyAdminToken,
  *    document_type: String
  *    acc_type: String
  *    newAcc_balance: Integer
- * }
+ * },
+ * token: Admin token
  */
 // TODO -> An user could have two or more accounts
 router.post('/updateAccount',

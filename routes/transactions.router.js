@@ -61,8 +61,12 @@ router.post('/createTransactionIntra', async (req, res) => {
   }
 });
 
-
-router.get('/getTransactionsInfo', async(req, res) => {
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
+router.post('/getTransactionsInfo', async(req, res) => {
   try {
     const result = await service.getTransactionsInfo();
     res.status(200).json(result);

@@ -14,7 +14,11 @@ const router = express.Router();
 const userService = new UserService();
 const accountsService = new AccountsService();
 
-
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
 router.get('/getAllUsers',
   verifyAdminToken,
   async(req, res) => {
@@ -29,6 +33,11 @@ router.get('/getAllUsers',
   }
 })
 
+/**
+ * {
+ *  token: Token
+ * }
+ */
 router.post('/getUserBalance',
   verifyToken,
   async(req, res) => {
