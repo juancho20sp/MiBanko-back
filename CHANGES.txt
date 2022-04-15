@@ -20,6 +20,7 @@ TRANSACTIONS ROUTER
   - /getTransactionsDetail -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
   - /getTransactionsUsuario -> Token -> SWITCHED FROM GET TO POST (Need a token as body).
   - /getOverdraws -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - /setOverdraws -> Admin token.
 
 
 

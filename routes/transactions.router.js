@@ -135,7 +135,12 @@ router.post('/getOverdraws', verifyAdminToken, async(req, res) => {
   }
 })
 
-router.put('/setOverdraws', async(req, res) => {
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
+router.put('/setOverdraws', verifyAdminToken, async(req, res) => {
   try {
     const data = req.body.setOverdraw;
     const result = await service.setOverdraws(data);
