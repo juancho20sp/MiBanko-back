@@ -4,6 +4,9 @@ const express = require('express');
 const UserService = require('../services/user.services');
 const AccountsService = require('../services/accounts.services');
 
+// Middlewares
+const authHandler = require('../middlewares/auth.handler');
+
 const router = express.Router();
 const userService = new UserService();
 const accountsService = new AccountsService();
@@ -22,21 +25,32 @@ router.get('/getAllUsers', async(req, res) => {
   }
 })
 
-router.post('/getUserBalance', async(req, res) => {
-  try {
-    const {
-      usr_doctype,
-      usr_numdoc
-    } = req.body;
+router.post('/getUserBalance',
+  authHandler,
+  async(req, res) => {
+    try {
+      const {
+        usr_doctype,
+        usr_numdoc,
+      } = req.body;
 
-    const users = await userService.getUserBalance(usr_doctype, usr_numdoc);
+      const {
+        usr_doctype: decoded_usr_doctype,
+        usr_numdoc: decoded_usr_numdoc
+      } = req.decodedUser;
 
-    res.status(200).json(users);
-  } catch(err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server'
-    })
-  }
+      if (usr_doctype === decoded_usr_doctype && Number(usr_numdoc) === Number(decoded_usr_numdoc)){
+        const users = await userService.getUserBalance(usr_doctype, usr_numdoc);
+        return res.status(200).json(users);
+      }
+
+      return res.status(401).send('Invalid token');
+
+    } catch(err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server'
+      })
+    }
 })
 
 
