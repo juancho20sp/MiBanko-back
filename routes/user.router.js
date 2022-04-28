@@ -3,7 +3,7 @@ const express = require('express');
 // Services
 const UserService = require('../services/user.services');
 const AccountsService = require('../services/accounts.services');
-
+const validationsService = require('../validations/validations')
 // Middlewares
 const {
   verifyToken,
@@ -13,6 +13,7 @@ const {
 const router = express.Router();
 const userService = new UserService();
 const accountsService = new AccountsService();
+const validations = new validationsService();
 
 /**
  * {
@@ -51,13 +52,19 @@ router.post('/getUserBalance',
         usr_doctype: decoded_usr_doctype,
         usr_numdoc: decoded_usr_numdoc
       } = req.decodedUser;
-
-      if (usr_doctype === decoded_usr_doctype && Number(usr_numdoc) === Number(decoded_usr_numdoc)){
-        const users = await userService.getUserBalance(usr_doctype, usr_numdoc);
-        return res.status(200).json(users);
+      if(validations.validateNumerics(decoded_usr_numdoc) && validations.validateNumerics(usr_numdoc)){
+        if(validations.validateDocs(decoded_usr_doctype) && validations.validateDocs(usr_doctype)){
+          if (usr_doctype === decoded_usr_doctype && Number(usr_numdoc) === Number(decoded_usr_numdoc)){
+            const users = await userService.getUserBalance(usr_doctype, usr_numdoc);
+            return res.status(200).json(users);
+          }
+          return res.status(401).send('Invalid token');
+        }
+        return res.status(400).send("Data user document type is not valid")
       }
+      return res.status(400).send("Data user document number is not valid")
 
-      return res.status(401).send('Invalid token');
+
 
     } catch(err) {
       res.status(500).json({
@@ -91,19 +98,33 @@ router.post('/createUser', async (req, res) => {
       document_type: data.document_type
     }
 
-    const userData = await userService.createUser(data);
-    const loginData = await userService.createLogin(data);
-    const accountData = await accountsService.createAccount(newAccountData);
+    if(validations.validateNumerics(accountNumber)){
+      if(validations.validateDocs(data.document_type)){
+        if(validations.validateNumerics(data.document_number)){
+          const userData = await userService.createUser(data);
+          const loginData = await userService.createLogin(data);
+          const accountData = await accountsService.createAccount(newAccountData);
 
-    const result = {
-      ...userData,
-      ...loginData,
-      ...accountData
+          const result = {
+            ...userData,
+            ...loginData,
+            ...accountData
+          }
+
+          delete result.password;
+          res.status(200).json(result);
+        }
+        return res.status(400).send("Data user document number is not valid")
+      }
+      return res.status(400).send("Data user document type is not valid")
     }
+    return res.status(400).send("Data account number is not valid")
 
-    delete result.password;
 
-    res.status(200).json(result);
+
+
+
+
   } catch(err) {
     res.status(500).json({
       message: 'Something went wrong on the server'

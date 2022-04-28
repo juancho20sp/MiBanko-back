@@ -2,7 +2,7 @@ const express = require('express');
 
 //Services
 const AccountsService = require('../services/accounts.services');
-
+const validationsService = require('../validations/validations')
 // Middlewares
 const {
   verifyToken,
@@ -11,6 +11,7 @@ const {
 
 const router = express.Router();
 const service = new AccountsService();
+const validations = new validationsService();
 
 /**
  * account: {
@@ -36,14 +37,17 @@ router.post('/getAccount',
         usr_numdoc
       } = req.decodedUser;
 
-
-      if (document_type === usr_doctype && document_number === usr_numdoc){
-        const accountData = await service.getAccount(data);
-        return res.status(200).json(accountData);
-
+      if(validations.validateNumerics(document_number) && validations.validateNumerics(usr_numdoc)){
+        if(validations.validateDocs(document_type) && validations.validateDocs(usr_doctype)){
+          if (document_type === usr_doctype && document_number === usr_numdoc){
+            const accountData = await service.getAccount(data);
+            return res.status(200).json(accountData);
+          }
+          return res.status(401).send('Invalid token');
+        }
+        return res.status(400).send('Invalid user document type');
       }
-
-      return res.status(401).send('Invalid token');
+      return res.status(400).send("Invalid user document number")
 
     } catch (err) {
       res.status(500).json({
@@ -105,10 +109,23 @@ verifyAdminToken,
   async (req, res) => {
     try {
       const data = req.body.account;
-
-      const accountData = await service.createAccount(data);
-
-      res.status(200).json(accountData);
+      if(validations.validateNumerics(data.acc_number)){
+        if(validations.validateNumerics(data.acc_balance)){
+          if(validations.validateAccType(data.acc_type)){
+            if(validations.validateNumerics(data.document_number)){
+              if(validations.validateDocs(data.document_type)){
+                const accountData = await service.createAccount(data);
+                res.status(200).json(accountData);
+              }
+              return res.status(400).send('Invalid user document type');
+            }
+            return res.status(400).send("Invalid user document number")
+          }
+          return res.status(400).send("Invalid account type data")
+        }
+        return res.status(400).send("Invalid account balance data")
+      }
+      return res.status(400).send("Invalid account number data")
     } catch (err) {
       res.status(500).json({
         message: 'Something went wrong on the server',
@@ -121,6 +138,7 @@ verifyAdminToken,
  *    document_number: Integer
  *    document_type: String
  *    acc_type: String
+ *    acc_numer: Integer
  *    newAcc_balance: Integer
  * },
  * token: Admin token
@@ -131,10 +149,24 @@ router.post('/updateAccount',
   async (req, res) => {
     try {
       const data = req.body.account;
+      if(validations.validateNumerics(data.acc_number)){
+        if(validations.validateNumerics(data.newAcc_balance)){
+          if(validations.validateAccType(data.acc_type)){
+            if(validations.validateNumerics(data.document_number)){
+              if(validations.validateDocs(data.document_type)){
+                const accountData = await service.updateAccount(data);
+                res.status(200).json(accountData);
+              }
+              return res.status(400).send('Invalid user document type');
+            }
+            return res.status(400).send("Invalid user document number")
+          }
+          return res.status(400).send("Invalid account type data")
+        }
+        return res.status(400).send("Invalid account balance data")
+      }
+      return res.status(400).send("Invalid account number data")
 
-      const accountData = await service.updateAccount(data);
-
-      res.status(200).json(accountData);
     } catch (err) {
       res.status(500).json({
         message: 'Something went wrong on the server',

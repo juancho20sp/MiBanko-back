@@ -3,11 +3,12 @@ const express = require('express');
 // Services
 const LoginService = require('../services/login.services');
 const UserService = require('../services/user.services');
+const validationsService = require('../validations/validations')
 
 const router = express.Router();
 const service = new LoginService();
 const userService = new UserService();
-
+const validations = new validationsService();
 
 /**
  * {
@@ -21,31 +22,34 @@ router.post('/', async (req, res) => {
     password
   } = req.body;
 
-  try {
-    const loginData = await service.getUserLogin(email, password);
+  if(validations.validateMail(email)){
+    try {
+      const loginData = await service.getUserLogin(email, password);
 
-    const {
-      usr_doctype,
-      usr_numdoc
-    } = loginData;
+      const {
+        usr_doctype,
+        usr_numdoc
+      } = loginData;
 
-    const userData = await userService.getUser(usr_doctype, usr_numdoc);
+      const userData = await userService.getUser(usr_doctype, usr_numdoc);
 
-    const finalData = {
-      ...loginData,
-      ...userData
+      const finalData = {
+        ...loginData,
+        ...userData
+      }
+
+      delete finalData.usr_password
+
+      const userToken = await service.createToken(finalData);
+
+      res.status(200).json(userToken);
+    } catch(err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server'
+      })
     }
-
-    delete finalData.usr_password
-
-    const userToken = await service.createToken(finalData);
-
-    res.status(200).json(userToken);
-  } catch(err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server'
-    })
   }
+  return res.status(400).send("Data email not valid")
 })
 
 /**
