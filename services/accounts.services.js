@@ -26,6 +26,7 @@ class AccountsService{
             } = accountData;
 
 
+
             const creationDate = new Date().toISOString().slice(0, 10);
 
             result = await db.query(`INSERT INTO DB_ACCOUNTS(ACC_NUMBER, ACC_CREATION_DATE, ACC_BALANCE, ACC_TYPE, USR_NUMDOC, USR_DOCTYPE) VALUES($1, $2, $3, $4, $5, $6) RETURNING *`,
@@ -120,10 +121,11 @@ class AccountsService{
                 document_number,
                 document_type,
                 acc_type,
+                acc_number,
                 newAcc_balance
             }= accountData;
 
-            result= await db.query(`UPDATE DB_ACCOUNTS SET ACC_BALANCE = $1 WHERE (DB_ACCOUNTS.USR_NUMDOC = $2 AND DB_ACCOUNTS.USR_DOCTYPE = $3 AND DB_ACCOUNTS.ACC_TYPE = $4) RETURNING *`, [newAcc_balance, document_number, document_type.toUpperCase(), acc_type.toUpperCase()]);
+            result= await db.query(`UPDATE DB_ACCOUNTS SET ACC_BALANCE = $1 WHERE (DB_ACCOUNTS.USR_NUMDOC = $2 AND DB_ACCOUNTS.USR_DOCTYPE = $3 AND DB_ACCOUNTS.ACC_TYPE = $4 AND DB_ACCOUNTS.acc_number = $5) RETURNING *`, [newAcc_balance, document_number, document_type.toUpperCase(), acc_type.toUpperCase(), acc_number]);
 
             result= result.rows[0];
         }catch(err){

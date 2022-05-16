@@ -2,6 +2,7 @@ const express = require('express');
 
 const TransctionsService = require('../services/transactions.services');
 
+const validationsService = require('../validations/validations')
 // Middlewares
 const {
   verifyToken,
@@ -11,6 +12,7 @@ const {
 
 const router = express.Router();
 const service = new TransctionsService();
+const validations = new validationsService();
 
 /**
  * transactionIntra:{
@@ -28,10 +30,29 @@ const service = new TransctionsService();
 router.post('/createTransactionIntra', verifyToken, async (req, res) => {
   try {
     const data = req.body.transactionIntra;
-
-    const transactionintraData = await service.createTransactionIntra(data);
-
-    res.status(200).json(transactionintraData);
+    if(validations.validateNumerics(data.ndoc)){
+      if(validations.validateNumerics(data.amount)){
+        if(validations.validateNumerics(data.destiny_account)){
+          if(validations.validateNumerics(data.amount_overdraw)){
+            if(validations.validateNumerics(data.source_acc)){
+              if(validations.validateDocs(data.tdoc)){
+                if(validations.validateBools(data.overdraw)){
+                  const transactionintraData = await service.createTransactionIntra(data);
+                  res.status(200).json(transactionintraData);
+                }
+                return res.status(400).send("Data overdraw is not valid")
+              }
+              return res.status(400).send("Data user documet type is not vallid")
+            }
+            return res.status(400).send("Data source account is not valid")
+          }
+          return res.status(400).send("Data amount overdraw is not valid")
+        }
+        return res.status(400).send("Data destiny account is not valid")
+      }
+      return res.status(400).send("Data amount is not valid")
+    }
+    return res.status(400).send("Data user number document is not valid")
   } catch(err) {
     res.status(500).json({
       message: 'Something went wrong on the server'
@@ -59,10 +80,38 @@ router.post('/createTransactionIntra', verifyToken, async (req, res) => {
  router.post('/createTransactionInter', verifyToken, async (req, res) => {
   try {
     const data = req.body.transactionInter;
-
-    const transactionInterData = await service.createTransactionInter(data);
-
-    res.status(200).json(transactionInterData);
+    if(validations.validateNumerics(data.tr_destiny_receiver_docNum)){
+      if(validations.validateNumerics(data.amount)){
+        if(validations.validateNumerics(data.tr_destiny_acc)){
+          if(validations.validateNumerics(data.amount_overdraw)){
+            if(validations.validateNumerics(data.tr_source_acc)){
+              if(validations.validateDocs(data.tr_destiny_receiver_typeDoc)){
+                if(validations.validateBools(data.overdraw)){
+                  if(validations.validateNumerics(data.tr_destiny_bank)){
+                    if(validations.validateAlphabetic(data.tr_destiny_receiver_lastName)){
+                      if(validations.validateAlphabetic(data.tr_destiny_receiver_name)){
+                        const transactionInterData = await service.createTransactionInter(data);
+                        res.status(200).json(transactionInterData);
+                      }
+                      return res.status(400).send("Data first name is not valid")
+                    }
+                    return res.status(400).send("Data last name is not valid")
+                  }
+                  return res.status(400).send("Data bank destiny is not valid")
+                }
+                return res.status(400).send("Data overdraw is not valid")
+              }
+              return res.status(400).send("Data user documet type is not vallid")
+            }
+            return res.status(400).send("Data source account is not valid")
+          }
+          return res.status(400).send("Data amount overdraw is not valid")
+        }
+        return res.status(400).send("Data destiny account is not valid")
+      }
+      return res.status(400).send("Data amount is not valid")
+    }
+    return res.status(400).send("Data user number document is not valid")
   } catch(err) {
     res.status(500).json({
       message: 'Something went wrong on the server'
@@ -110,8 +159,11 @@ router.post('/getTransactionsDetail', verifyAdminToken, async(req, res) => {
 router.post('/getTransactionsUsuario', verifyToken, async(req, res) => {
   try {
     const data = req.body.getData;
-    const result = await service.getTransactionsUsuario(data);
-    res.status(200).json(result);
+    if(validations.validateNumerics(data.account)){
+      const result = await service.getTransactionsUsuario(data);
+      res.status(200).json(result);
+    }
+    return res.status.send("Data acccount invalid")
   } catch(err) {
     res.status(500).json({
       message: 'Something went wrong on the server'
@@ -143,8 +195,14 @@ router.post('/getOverdraws', verifyAdminToken, async(req, res) => {
 router.put('/setOverdraws', verifyAdminToken, async(req, res) => {
   try {
     const data = req.body.setOverdraw;
-    const result = await service.setOverdraws(data);
-    res.status(200).json(result);
+    if(validations.validateNumerics(data.id_overdraw)){
+      if(validations.validateBools(data.estado)){
+        const result = await service.setOverdraws(data);
+        res.status(200).json(result);
+      }
+      return res.status.send("Data status invalid")
+    }
+    return res.status.send("Data overdraw invalid")
   } catch(err) {
     res.status(500).json({
       message: 'Something went wrong on the server'
