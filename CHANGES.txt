@@ -1,0 +1,30 @@
+USER ROUTER:
+  - /getAllUsers -> Admin token.
+  - /getUserBalance -> Token -> Document type and number must match with the balance to consult.
+
+ACCOUNTS ROUTER
+  - /getAccount -> Token -> Document type and number must match with the account to consult.
+  - /getAllAccounts -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - /getBalanceBank -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - /createAccount -> Admin token.
+  - /updateAccount -> Admin token.
+
+BANKS ROUTER
+  - / (Get all banks) -> Token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - / (Post -> create bank) -> ADmin token -> SWITCHED ENDPOINT FROM POST(/) TO POST(/createBank)
+
+TRANSACTIONS ROUTER
+  - /getTransactionsInfo -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - /createTransactionIntra -> Token.
+  - /createTransactionInter -> Token.
+  - /getTransactionsDetail -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - /getTransactionsUsuario -> Token -> SWITCHED FROM GET TO POST (Need a token as body).
+  - /getOverdraws -> Admin token -> SWITCHED FROM GET TO POST (Need an admin token as body).
+  - /setOverdraws -> Admin token.
+
+
+
+RECOMMENDATIONS
+  - /updateAccount -> what if the user has two or more accounts?
+  - /createTransactionIntra -> it seems that the endpoint is not working
+  - /getTransactionsUsuario -> it seems that the endpoint is not working

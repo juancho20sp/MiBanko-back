@@ -4,17 +4,28 @@ const express = require('express');
 const UserService = require('../services/user.services');
 const AccountsService = require('../services/accounts.services');
 
+// Middlewares
+const {
+  verifyToken,
+  verifyAdminToken
+} = require('../middlewares/auth.handler');
+
 const router = express.Router();
 const userService = new UserService();
 const accountsService = new AccountsService();
 
-
-
-router.get('/getAllUsers', async(req, res) => {
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
+router.get('/getAllUsers',
+  verifyAdminToken,
+  async(req, res) => {
   try {
-    const users = await userService.getAllUsers();
+      const users = await userService.getAllUsers();
+      return res.status(200).json(users);
 
-    res.status(200).json(users);
   } catch(err) {
     res.status(500).json({
       message: 'Something went wrong on the server'
@@ -22,21 +33,37 @@ router.get('/getAllUsers', async(req, res) => {
   }
 })
 
-router.post('/getUserBalance', async(req, res) => {
-  try {
-    const {
-      usr_doctype,
-      usr_numdoc
-    } = req.body;
+/**
+ * {
+ *  token: Token
+ * }
+ */
+router.post('/getUserBalance',
+  verifyToken,
+  async(req, res) => {
+    try {
+      const {
+        usr_doctype,
+        usr_numdoc,
+      } = req.body;
 
-    const users = await userService.getUserBalance(usr_doctype, usr_numdoc);
+      const {
+        usr_doctype: decoded_usr_doctype,
+        usr_numdoc: decoded_usr_numdoc
+      } = req.decodedUser;
 
-    res.status(200).json(users);
-  } catch(err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server'
-    })
-  }
+      if (usr_doctype === decoded_usr_doctype && Number(usr_numdoc) === Number(decoded_usr_numdoc)){
+        const users = await userService.getUserBalance(usr_doctype, usr_numdoc);
+        return res.status(200).json(users);
+      }
+
+      return res.status(401).send('Invalid token');
+
+    } catch(err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server'
+      })
+    }
 })
 
 
@@ -93,20 +120,19 @@ router.post('/createUser', async (req, res) => {
  *    password: String
  * }
  */
- router.post('/createLogin', async (req, res) => {
-  try {
-    const data = req.body.user;
+ // TODO: Verify it this is needed
+//  router.post('/createLogin', async (req, res) => {
+//   try {
+//     const data = req.body.user;
+//     const userLogin = await userService.createLogin(data);
 
-
-    const userLogin = await userService.createLogin(data);
-
-    res.status(200).json(userLogin);
-  } catch(err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server'
-    })
-  }
-})
+//     res.status(200).json(userLogin);
+//   } catch(err) {
+//     res.status(500).json({
+//       message: 'Something went wrong on the server'
+//     })
+//   }
+// })
 
 
 

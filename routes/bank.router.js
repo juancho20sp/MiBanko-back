@@ -3,11 +3,17 @@ const express = require('express');
 // Services
 const BankService = require('../services/bank.services');
 
+// Middlewares
+const {
+  verifyToken,
+  verifyAdminToken
+} = require('../middlewares/auth.handler');
+
 const router = express.Router();
 const service = new BankService();
 
 
-router.get('/', async(req, res) => {
+router.post('/', verifyToken, async(req, res) => {
   try {
     const banks = await service.getAllBanks();
 
@@ -19,7 +25,13 @@ router.get('/', async(req, res) => {
   }
 })
 
-router.post('/', async (req, res) => {
+/**
+ * {
+ *  bnk_name: String,
+ *  token: Admin token
+ * }
+ */
+router.post('/createBank', verifyAdminToken, async (req, res) => {
   const bankData = req.body;
 
   try {

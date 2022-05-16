@@ -42,6 +42,8 @@ class UserService {
       result = {
         message: 'Something went wrong'
       }
+
+      throw new Error(err);
     } finally {
       await db.end();
     }
@@ -68,7 +70,7 @@ class UserService {
       const passwordHash = crypto.createHash('sha256').update(password).digest('hex');
 
       result = await db.query(`INSERT INTO DB_LOGIN(USR_NUMDOC, USR_DOCTYPE, USR_USERNAME, USR_EMAIL, USR_PASSWORD) VALUES($1, $2, $3, $4, $5) RETURNING *`, [document_number,
-        document_type,
+        document_type.toUpperCase(),
         username,
         email,
         passwordHash]);
@@ -81,6 +83,9 @@ class UserService {
       result = {
         message: 'Something went wrong'
       }
+
+      throw new Error(err);
+
     } finally {
       await db.end();
     }

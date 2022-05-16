@@ -42,6 +42,9 @@ class AccountsService{
             result = {
                 message: 'Something went wrong creating the account'
             }
+
+            throw new Error(err)
+
         } finally {
             await db.end();
         }
@@ -71,6 +74,8 @@ class AccountsService{
             result = {
                 message: 'Something went wrong getting the account'
             }
+
+            throw new Error(err);
         }finally{
             await db.end();
         }

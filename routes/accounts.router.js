@@ -3,6 +3,12 @@ const express = require('express');
 //Services
 const AccountsService = require('../services/accounts.services');
 
+// Middlewares
+const {
+  verifyToken,
+  verifyAdminToken
+} = require('../middlewares/auth.handler');
+
 const router = express.Router();
 const service = new AccountsService();
 
@@ -11,44 +17,77 @@ const service = new AccountsService();
  *    document_number: Integer
  *    document_type: String
  *    acc_type: String
+ * },
+ * token: Token
+ */
+router.post('/getAccount',
+  verifyToken,
+  async (req, res) => {
+    try {
+      const data = req.body.account;
+
+      const {
+        document_number,
+        document_type
+      } = data;
+
+      const {
+        usr_doctype,
+        usr_numdoc
+      } = req.decodedUser;
+
+
+      if (document_type === usr_doctype && document_number === usr_numdoc){
+        const accountData = await service.getAccount(data);
+        return res.status(200).json(accountData);
+
+      }
+
+      return res.status(401).send('Invalid token');
+
+    } catch (err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server',
+      });
+    }
+  });
+
+  /**
+   * {
+   *  token: Admin token
+   * }
+   */
+router.post('/getAllAccounts',
+  verifyAdminToken,
+  async (req, res) => {
+    try {
+      const data = await service.getAllAccounts();
+
+      res.status(200).json(data);
+    } catch (err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server',
+      });
+    }
+});
+
+/**
+ * {
+ *  token: Admin token
  * }
  */
-router.post('/getAccount', async (req, res) => {
-  try {
-    const data = req.body.account;
+router.post('/getBalanceBank',
+  verifyAdminToken,
+  async (req, res) => {
+    try {
+      const data = await service.getBalanceBank();
 
-    const accountData = await service.getAccount(data);
-
-    res.status(200).json(accountData);
-  } catch (err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server',
-    });
-  }
-});
-
-router.get('/getAllAccounts', async (req, res) => {
-  try {
-    const data = await service.getAllAccounts();
-
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server',
-    });
-  }
-});
-
-router.get('/getBalanceBank', async (req, res) => {
-  try {
-    const data = await service.getBalanceBank();
-
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server',
-    });
-  }
+      res.status(200).json(data);
+    } catch (err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server',
+      });
+    }
 });
 
 /**
@@ -58,41 +97,49 @@ router.get('/getBalanceBank', async (req, res) => {
  *    acc_type: String
  *    document_number: Integer
  *    document_type: String
- * }
+ * },
+ * token: Admin token
  */
-router.post('/createAccount', async (req, res) => {
-  try {
-    const data = req.body.account;
+router.post('/createAccount',
+verifyAdminToken,
+  async (req, res) => {
+    try {
+      const data = req.body.account;
 
-    const accountData = await service.createAccount(data);
+      const accountData = await service.createAccount(data);
 
-    res.status(200).json(accountData);
-  } catch (err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server',
-    });
-  }
+      res.status(200).json(accountData);
+    } catch (err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server',
+      });
+    }
 });
 
 /**
  * account: {
  *    document_number: Integer
  *    document_type: String
+ *    acc_type: String
  *    newAcc_balance: Integer
- * }
+ * },
+ * token: Admin token
  */
-router.post('/updateAccount', async (req, res) => {
-  try {
-    const data = req.body.account;
+// TODO -> An user could have two or more accounts
+router.post('/updateAccount',
+  verifyAdminToken,
+  async (req, res) => {
+    try {
+      const data = req.body.account;
 
-    const accountData = await service.updateAccount(data);
+      const accountData = await service.updateAccount(data);
 
-    res.status(200).json(accountData);
-  } catch (err) {
-    res.status(500).json({
-      message: 'Something went wrong on the server',
-    });
-  }
+      res.status(200).json(accountData);
+    } catch (err) {
+      res.status(500).json({
+        message: 'Something went wrong on the server',
+      });
+    }
 });
 
 module.exports = router;

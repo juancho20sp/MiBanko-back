@@ -2,6 +2,13 @@ const express = require('express');
 
 const TransctionsService = require('../services/transactions.services');
 
+// Middlewares
+const {
+  verifyToken,
+  verifyAdminToken
+} = require('../middlewares/auth.handler');
+
+
 const router = express.Router();
 const service = new TransctionsService();
 
@@ -14,10 +21,11 @@ const service = new TransctionsService();
  *  numDoc: Integer
  *  overdraw: Bool
  *  amount_overdraw: Integer
- * }
+ * },
+ * token: Token
  */
 
-router.post('/createTransactionIntra', async (req, res) => {
+router.post('/createTransactionIntra', verifyToken, async (req, res) => {
   try {
     const data = req.body.transactionIntra;
 
@@ -45,9 +53,10 @@ router.post('/createTransactionIntra', async (req, res) => {
  *  amount: Integer
  *  overdraw: Bool
  *  amount_overdraw: Integer
- * }
+ * },
+ * token: Token
  */
- router.post('/createTransactionInter', async (req, res) => {
+ router.post('/createTransactionInter', verifyToken, async (req, res) => {
   try {
     const data = req.body.transactionInter;
 
@@ -61,8 +70,12 @@ router.post('/createTransactionIntra', async (req, res) => {
   }
 });
 
-
-router.get('/getTransactionsInfo', async(req, res) => {
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
+router.post('/getTransactionsInfo', verifyAdminToken, async(req, res) => {
   try {
     const result = await service.getTransactionsInfo();
     res.status(200).json(result);
@@ -73,7 +86,12 @@ router.get('/getTransactionsInfo', async(req, res) => {
   }
 })
 
-router.get('/getTransactionsDetail', async(req, res) => {
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
+router.post('/getTransactionsDetail', verifyAdminToken, async(req, res) => {
   try {
     const result = await service.getTransactionsDetail();
     res.status(200).json(result);
@@ -84,7 +102,12 @@ router.get('/getTransactionsDetail', async(req, res) => {
   }
 })
 
-router.get('/getTransactionsUsuario', async(req, res) => {
+/**
+ * {
+ *  token: Token
+ * }
+ */
+router.post('/getTransactionsUsuario', verifyToken, async(req, res) => {
   try {
     const data = req.body.getData;
     const result = await service.getTransactionsUsuario(data);
@@ -96,7 +119,12 @@ router.get('/getTransactionsUsuario', async(req, res) => {
   }
 })
 
-router.get('/getOverdraws', async(req, res) => {
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
+router.post('/getOverdraws', verifyAdminToken, async(req, res) => {
   try {
     const result = await service.getOverdraws();
     res.status(200).json(result);
@@ -107,7 +135,12 @@ router.get('/getOverdraws', async(req, res) => {
   }
 })
 
-router.put('/setOverdraws', async(req, res) => {
+/**
+ * {
+ *  token: Admin token
+ * }
+ */
+router.put('/setOverdraws', verifyAdminToken, async(req, res) => {
   try {
     const data = req.body.setOverdraw;
     const result = await service.setOverdraws(data);
